@@ -1,0 +1,29 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/px4-gui/node_modules
+/px4-gui/.pnp
+/px4-gui.pnp.js
+
+# testing
+/px4-gui/coverage
+
+# production
+/px4-gui/build
+
+# misc
+/px4-gui.DS_Store
+/px4-gui.env.local
+/px4-gui.env.development.local
+/px4-gui.env.test.local
+/px4-gui.env.production.local
+
+/px4-guinpm-debug.log*
+/px4-guiyarn-debug.log*
+/px4-guiyarn-error.log*
+
+
+#ROS
+/ros2_ws/build
+/ros2_ws/install
+/ros2_ws/log
