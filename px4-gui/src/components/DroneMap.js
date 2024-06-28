@@ -6,7 +6,7 @@ import Button from '@mui/material/Button';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZWxpcG9sMDIiLCJhIjoiY2x4cDE0eGNqMDVobjJrcGtzODUxMXZtMyJ9.e0Iye6AtNZEH_B806foH5w'; // Replace with your Mapbox access token
 
-const DroneMap = ({ latitude, longitude, angle }) => {
+const DroneMap = ({ latitude, longitude, angle, setClickedCoords }) => {
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -82,6 +82,12 @@ const DroneMap = ({ latitude, longitude, angle }) => {
           'line-width': 4
         }
       });
+    });
+
+    // Add click event listener to the map
+    map.current.on('click', (e) => {
+      const { lng, lat } = e.lngLat;
+      setClickedCoords({ lng, lat });
     });
 
   }, [latitude, longitude]); // run effect only when latitude or longitude change

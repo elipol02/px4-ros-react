@@ -1,6 +1,6 @@
 // App.js
 import React, { useState, useCallback } from 'react';
-import { Container, Typography, Box, Grid } from '@mui/material';
+import { Container, Box, Grid } from '@mui/material';
 import ROSConnection from './components/ROSConnection';
 import Topic from './components/Topic';
 import Dropdown from './components/Dropdown';
@@ -8,12 +8,14 @@ import TopicDisplay from './components/TopicDisplay';
 import PresetGUI from './components/PresetGUI';
 import PresetTopicDisplay from './components/PresetTopicDisplay'
 import DroneMap from'./components/DroneMap'
+import LocationPublisher from './components/LocationPublisher';
 
 const App = () => {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const [messages, setMessages] = useState({});
   const [listeners, setListeners] = useState({});
   const [presetFields, setPresetFields] = useState({});
+  const [clickedCoords, setClickedCoords] = useState('');
 
   const setField = (fields) => {
       setPresetFields((prevFields) => ({
@@ -65,21 +67,24 @@ const App = () => {
     <ROSConnection>
       <Container>
         <PresetGUI
-          setField={setField}
+            setField={setField}
         />
-        <PresetTopicDisplay
-          topicName="/mavros/state"
-          fields={presetFields}
-        />
+        <Grid container item>
+          <PresetTopicDisplay
+            topicName="/mavros/state"
+            fields={presetFields}
+          />
+          <LocationPublisher
+            clickedCoords={clickedCoords}
+          /> 
+        </Grid>
         <DroneMap
           latitude={presetFields['latitude']}
           longitude={presetFields['longitude']}
           angle={presetFields['compass']}
+          setClickedCoords={setClickedCoords}
         />
         <Box sx={{ my: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            ROS Topic Viewer
-          </Typography>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <Dropdown addTopic={handleAddTopic} />

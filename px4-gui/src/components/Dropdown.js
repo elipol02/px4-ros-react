@@ -33,11 +33,11 @@ const Dropdown = ({ addTopic }) => {
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
       <FormControl fullWidth>
-        <InputLabel id="topic-select-label">Select Topic</InputLabel>
+        <InputLabel id="topic-select-label">Echo a ROS Topic</InputLabel>
         <Select
           labelId="topic-select-label"
           value={topic}
-          label="Select Topic"
+          label="Select ROS Topic"
           onChange={(e) => setTopic(e.target.value)}
         >
           {topics.map((t) => (

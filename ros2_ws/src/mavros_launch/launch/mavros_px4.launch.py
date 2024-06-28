@@ -29,5 +29,5 @@ def generate_launch_description():
             executable='joystick_arm_disarm',
             name='joystick_arm_disarm',
             output='screen',
-        )
+        ),
     ])

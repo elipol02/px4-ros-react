@@ -1,5 +1,4 @@
-// components/ROSConnection.js
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import ROSLIB from 'roslib';
 
 const ROSContext = createContext();
@@ -10,7 +9,7 @@ const ROSConnection = ({ children }) => {
   const [ros, setRos] = useState(null);
   const [connected, setConnected] = useState(false);
 
-  const connectToRos = useCallback(() => {
+  useEffect(() => {
     const rosConnection = new ROSLIB.Ros({
       url: 'ws://localhost:9090',
     });
@@ -29,8 +28,12 @@ const ROSConnection = ({ children }) => {
     rosConnection.on('close', () => {
       console.warn('Connection to ROS closed. Attempting to reconnect...');
       setConnected(false);
-      // Avoid immediate reconnection to prevent rapid retries
-      setTimeout(() => connectToRos(), 5000); // Reconnect after 5 seconds
+      setTimeout(() => {
+        const newRosConnection = new ROSLIB.Ros({
+          url: 'ws://localhost:9090',
+        });
+        setRos(newRosConnection);
+      }, 5000); // Reconnect after 5 seconds
     });
 
     return () => {
@@ -39,10 +42,6 @@ const ROSConnection = ({ children }) => {
       }
     };
   }, []);
-
-  useEffect(() => {
-    connectToRos();
-  }, [connectToRos]);
 
   return <ROSContext.Provider value={{ ros, connected }}>{children}</ROSContext.Provider>;
 };

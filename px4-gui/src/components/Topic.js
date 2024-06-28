@@ -1,4 +1,3 @@
-// components/Topic.js
 import { useEffect, useRef } from 'react';
 import { useROS } from './ROSConnection';
 import ROSLIB from 'roslib';
@@ -40,7 +39,7 @@ const Topic = ({ topic, onNewMessage, onSubscriptionReady }) => {
         listenerRef.current.unsubscribe();
       }
     };
-  }, []);
+  }, []); // Include all dependencies
 
   return null;
 };
