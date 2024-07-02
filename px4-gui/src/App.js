@@ -9,6 +9,7 @@ import PresetGUI from './components/PresetGUI';
 import PresetTopicDisplay from './components/PresetTopicDisplay'
 import DroneMap from'./components/DroneMap'
 import LocationPublisher from './components/LocationPublisher';
+import Renderer from './components/Renderer';
 
 const App = () => {
   const [selectedTopics, setSelectedTopics] = useState([]);
@@ -16,6 +17,7 @@ const App = () => {
   const [listeners, setListeners] = useState({});
   const [presetFields, setPresetFields] = useState({});
   const [clickedCoords, setClickedCoords] = useState('');
+  const [clickedLocations, setClickedLocations] = useState([]);
 
   const setField = (fields) => {
       setPresetFields((prevFields) => ({
@@ -82,7 +84,11 @@ const App = () => {
           latitude={presetFields['latitude']}
           longitude={presetFields['longitude']}
           angle={presetFields['compass']}
+          altitude={presetFields['local_altitude']}
           setClickedCoords={setClickedCoords}
+          clickedLocations={clickedLocations}
+          setClickedLocations={setClickedLocations}
+
         />
         <Box sx={{ my: 4 }}>
           <Grid container spacing={2}>

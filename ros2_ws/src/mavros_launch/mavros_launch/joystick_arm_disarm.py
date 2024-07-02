@@ -42,6 +42,7 @@ class JoystickArmDisarm(Node):
 
         if msg.buttons[arm_button_index] == 1 and self.previous_buttons[arm_button_index] == 0:
             self.log_message('Arm button pressed')
+            self.set_position_mode()
             self.last_command_was_arm = True
             self.call_arm_service(True)
         elif msg.buttons[disarm_button_index] == 1 and self.previous_buttons[disarm_button_index] == 0:
@@ -62,16 +63,14 @@ class JoystickArmDisarm(Node):
             response = future.result()
             if response.success:
                 self.log_message('Arm/Disarm command successful')
-                if self.last_command_was_arm:  # Check if the last command was to arm
-                    self.set_offboard_mode()
             else:
                 self.log_message('Arm/Disarm command failed')
         except Exception as e:
             self.log_message(f'Arm/Disarm service call failed: {str(e)}')
 
-    def set_offboard_mode(self):
+    def set_position_mode(self):
         req = SetMode.Request()
-        req.custom_mode = 'OFFBOARD'
+        req.custom_mode = 'POSCTL'
         future = self.set_mode_client.call_async(req)
         future.add_done_callback(self.set_mode_response_callback)
 
@@ -79,9 +78,9 @@ class JoystickArmDisarm(Node):
         try:
             response = future.result()
             if response.mode_sent:
-                self.log_message('Offboard mode set successfully')
+                self.log_message('position mode set successfully')
             else:
-                self.log_message('Failed to set offboard mode')
+                self.log_message('Failed to set position mode')
         except Exception as e:
             self.log_message(f'Set mode service call failed: {str(e)}')
 
