@@ -23,8 +23,10 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'cmd_vel_republisher = mavros_launch.cmd_vel_republisher:main',
-            'joystick_arm_disarm = mavros_launch.joystick_arm_disarm:main',
+            'joystick = mavros_launch.joystick:main',
+            'arm_disarm = mavros_launch.arm_disarm:main',
+            'mode_set = mavros_launch.mode_set:main',
+            'setpoint_control = mavros_launch.setpoint_control:main',
         ],
     },
 )

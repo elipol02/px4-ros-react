@@ -9,25 +9,62 @@ def generate_launch_description():
             executable='mavros_node',
             output='screen',
             parameters=[{
+                # simulation:
                 'fcu_url': 'udp://:14540@localhost:14557',
-                #'fcu_url': '/dev/serial/by-id/usb-Freefly_Systems_Long_Range_RF_0000BC210001-if00:921600',
+                # Alta X:
                 #'fcu_url': '/dev/ttyACM0:921600',
-                'gcs_url': '',
+                'gcs_url': 'udp://@localhost:14551',
                 'target_system_id': 1,
                 'target_component_id': 1,
-                'log_level': 'info'
+                'log_level': 'info',
+                'heartbeat_mav_type': 'GCS'
             }],
         ),
         Node(
             package='mavros_launch',
-            executable='cmd_vel_republisher',
-            name='cmd_vel_republisher',
+            executable='joystick',
+            name='joystick',
             output='screen',
         ),
         Node(
             package='mavros_launch',
-            executable='joystick_arm_disarm',
-            name='joystick_arm_disarm',
+            executable='arm_disarm',
+            name='arm_disarm',
             output='screen',
+        ),
+        Node(
+            package='mavros_launch',
+            executable='mode_set',
+            name='mode_set',
+            output='screen',
+        ),
+        Node(
+            package='joy',
+            executable='joy_node',
+            name='joy_node',
+            output='screen',
+            parameters=[{
+                'dev': '/dev/input/js0',  # Adjust if necessary
+                'deadzone': 0.05
+            }]
+        ),
+        Node(
+            package='teleop_twist_joy',
+            executable='teleop_node',
+            name='teleop_twist_joy',
+            output='screen',
+            parameters=[{
+                'axis_linear.z': 2,         # Throttle (e.g., left stick up/down)
+                'axis_angular.yaw': 3,      # Yaw (e.g., left stick left/right)
+                'axis_linear.y': 1,    # Pitch (e.g., right stick up/down)
+                'axis_linear.x': 0,     # Roll (e.g., right stick left/right)
+                'scale_linear.z': -4.0,
+                'scale_angular.yaw': 4.0,
+                'scale_linear.y': -4.0,
+                'scale_linear.x': -4.0,
+                'enable_button': 7,
+                'enable_arm_button': 1,    # Button to arm the vehicle
+                'enable_disarm_button': 0, # Button to disarm the vehicle
+            }]
         ),
     ])
