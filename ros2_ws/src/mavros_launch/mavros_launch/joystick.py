@@ -48,7 +48,7 @@ class JoystickNode(Node):
         
         self.get_logger().info('Listening to /startmission')
 
-        self.mission_active = False
+        self.mission_active = True
         self.cmd_vel_timer = self.create_timer(0.1, self.cmd_vel_timer_callback)
         self.last_cmd_vel_msg = None
 

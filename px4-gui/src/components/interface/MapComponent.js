@@ -3,12 +3,25 @@ import { createRoot } from 'react-dom/client';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
 import NavigationIcon from '@mui/icons-material/Navigation';
 import LocationOnIcon from '@mui/icons-material/LocationOn';
-import Button from '@mui/material/Button';
+import NearMeIcon from '@mui/icons-material/NearMe';
+import AirplanemodeInactiveIcon from '@mui/icons-material/AirplanemodeInactive';
+import ApartmentIcon from '@mui/icons-material/Apartment';
+import LandscapeIcon from '@mui/icons-material/Landscape';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Button, Tooltip, Box } from '@mui/material';
+
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiZWxpcG9sMDIiLCJhIjoiY2x4cDE0eGNqMDVobjJrcGtzODUxMXZtMyJ9.e0Iye6AtNZEH_B806foH5w'; // Replace with your Mapbox access token
 
 const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defaultElevation }) => {
   const [noFlyZones, setNoFlyZones] = useState(null);
+  const [mapStyle, setMapStyle] = useState('mapbox://styles/mapbox/satellite-streets-v11');
+  const [showMenu, setShowMenu] = useState(false);
+  const [layersVisible, setLayersVisible] = useState({
+    noFlyZones: true,
+    terrain: false,
+    buildings: false,
+  });
   const mapContainer = useRef(null);
   const map = useRef(null);
   const marker = useRef(null);
@@ -27,28 +40,27 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
   });
   const defaultElevationRef = useRef(defaultElevation);
 
+  // Set default elevation for markers
   useEffect(() => {
     defaultElevationRef.current = defaultElevation;
   }, [defaultElevation]);
 
+  // Initialize map
   useEffect(() => {
     if (!latitude || !longitude) return; // wait for latitude and longitude to be set
 
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/satellite-streets-v11',
+      style: 'mapbox://styles/mapbox/outdoors-v12',
       center: [longitude, latitude],
       zoom: 15,
-      bearing: bearing
+      bearing: bearing,
     });
 
     map.current.on('rotate', () => {
       setBearing(map.current.getBearing());
     });
-
-    // Add navigation controls
-    map.current.addControl(new mapboxgl.NavigationControl());
 
     // Create a custom marker using NavigationIcon
     const markerElement = document.createElement('div');
@@ -92,7 +104,7 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
       });
 
       // Add no-fly zones layer
-      if (noFlyZones) {
+      if (noFlyZones && layersVisible.noFlyZones) {
         map.current.addSource('no-fly-zones', {
           type: 'geojson',
           data: noFlyZones
@@ -104,65 +116,68 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
           source: 'no-fly-zones',
           paint: {
             'fill-color': '#FF0000',
-            'fill-opacity': 0.5
+            'fill-opacity': 0.2
           }
         });
       }
-      /*
+      
       // Add the 3D buildings layer
-      map.current.addLayer({
-        'id': '3d-buildings',
-        'source': 'composite',
-        'source-layer': 'building',
-        'filter': ['==', 'extrude', 'true'],
-        'type': 'fill-extrusion',
-        'minzoom': 15,
-        'paint': {
-          'fill-extrusion-color': '#aaa',
-          'fill-extrusion-height': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            15,
-            0,
-            15.05,
-            ['get', 'height']
-          ],
-          'fill-extrusion-base': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            15,
-            0,
-            15.05,
-            ['get', 'min_height']
-          ],
-          'fill-extrusion-opacity': 0.9
-        }
-      });
-
+      if (layersVisible.buildings) {
+        map.current.addLayer({
+          'id': '3d-buildings',
+          'source': 'composite',
+          'source-layer': 'building',
+          'filter': ['==', 'extrude', 'true'],
+          'type': 'fill-extrusion',
+          'minzoom': 15,
+          'paint': {
+            'fill-extrusion-color': '#aaa',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'height']
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'min_height']
+            ],
+            'fill-extrusion-opacity': 0.9
+          }
+        });
+      }
       
       // Add the terrain layer
-      map.current.addSource('mapbox-dem', {
-        'type': 'raster-dem',
-        'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
-        'tileSize': 512,
-        'maxzoom': 14
-      });
-      map.current.setTerrain({ 'source': 'mapbox-dem' });
-      
+      if (layersVisible.terrain) {
+        map.current.addSource('mapbox-dem', {
+          'type': 'raster-dem',
+          'url': 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          'tileSize': 512,
+          'maxzoom': 14
+        });
+        map.current.setTerrain({ 'source': 'mapbox-dem' });
+        
 
-      // Add sky layer for better visualization
-      map.current.addLayer({
-        'id': 'sky',
-        'type': 'sky',
-        'paint': {
-          'sky-type': 'atmosphere',
-          'sky-atmosphere-sun': [0.0, 0.0],
-          'sky-atmosphere-sun-intensity': 15
-        }
-      });
-      */
+        // Add sky layer for better visualization
+        map.current.addLayer({
+          'id': 'sky',
+          'type': 'sky',
+          'paint': {
+            'sky-type': 'atmosphere',
+            'sky-atmosphere-sun': [0.0, 0.0],
+            'sky-atmosphere-sun-intensity': 15
+          }
+        });
+      }
+      
     });
     // Add click event listener to the map
     map.current.on('click', (e) => {
@@ -175,6 +190,82 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
 
   }, [latitude, longitude]);
 
+  // Toggle custom layers
+  useEffect(() => {
+    if (map.current) {
+      // Toggle no-fly zones layer visibility
+      if (map.current.getLayer('no-fly-zones-layer')) {
+        map.current.setLayoutProperty('no-fly-zones-layer', 'visibility', layersVisible.noFlyZones ? 'visible' : 'none');
+      }
+  
+      // Toggle 3D buildings layer visibility
+      if (map.current.getLayer('3d-buildings')) {
+        map.current.setLayoutProperty('3d-buildings', 'visibility', layersVisible.buildings ? 'visible' : 'none');
+      } else if (layersVisible.buildings) {
+        map.current.addLayer({
+          id: '3d-buildings',
+          source: 'composite',
+          'source-layer': 'building',
+          filter: ['==', 'extrude', 'true'],
+          type: 'fill-extrusion',
+          minzoom: 15,
+          paint: {
+            'fill-extrusion-color': '#aaa',
+            'fill-extrusion-height': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'height']
+            ],
+            'fill-extrusion-base': [
+              'interpolate',
+              ['linear'],
+              ['zoom'],
+              15,
+              0,
+              15.05,
+              ['get', 'min_height']
+            ],
+            'fill-extrusion-opacity': 0.9
+          }
+        });
+      }
+  
+      // Toggle terrain layer visibility
+      if (map.current.getSource('mapbox-dem')) {
+        if (layersVisible.terrain) {
+          map.current.setTerrain({ source: 'mapbox-dem' });
+        } else {
+          map.current.setTerrain(null);
+        }
+      } else if (layersVisible.terrain) {
+        map.current.addSource('mapbox-dem', {
+          type: 'raster-dem',
+          url: 'mapbox://mapbox.mapbox-terrain-dem-v1',
+          tileSize: 512,
+          maxzoom: 14
+        });
+        map.current.setTerrain({ source: 'mapbox-dem' });
+  
+        // Add sky layer for better visualization
+        map.current.addLayer({
+          id: 'sky',
+          type: 'sky',
+          paint: {
+            'sky-type': 'atmosphere',
+            'sky-atmosphere-sun': [0.0, 0.0],
+            'sky-atmosphere-sun-intensity': 15
+          }
+        });
+      }
+    }
+  }, [layersVisible]);
+  
+
+  // Update rotation of the marker and update the path
   useEffect(() => {
     if (!latitude || !longitude) return; // wait for latitude and longitude to be set
 
@@ -194,6 +285,7 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
     }
   }, [latitude, longitude, angle, bearing]);
 
+  // Editing Markers
   useEffect(() => {
     if (map.current) {
       // Remove existing markers that are not in the current state
@@ -280,23 +372,145 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
     }
   }, [points]);
 
+  // Center map handler
   const handleCenter = () => {
     if (map.current) {
       map.current.setCenter([longitude, latitude]);
+
+    }
+  };
+  
+  // Toggle layers handler
+  const toggleLayerVisibility = (layer) => {
+    setLayersVisible((prevState) => ({
+      ...prevState,
+      [layer]: !prevState[layer],
+    }));
+  };
+
+  // Toggle menu
+  const handleShowMenu = () => {
+    setShowMenu(!showMenu);
+  };
+
+  // Set map style
+  const changeMapStyle = (style) => {
+    setMapStyle(style);
+    if (map.current) {
+      map.current.setStyle(style);
     }
   };
 
+  // Fetch no-fly zone data from GitHub
   useEffect(() => {
-    // Fetch no-fly zone data from GitHub
+    
     fetch('https://raw.githubusercontent.com/mapbox/drone-feedback/master/sources/geojson/5_mile_airport.geojson')
       .then(response => response.json())
       .then(data => setNoFlyZones(data));
   }, []);
 
   return (
-    <div>
-      <Button variant="contained" size="small" color="primary" onClick={handleCenter} style={{ marginBottom: '10px' }}>Center</Button>
-      <div ref={mapContainer} className="map-container" style={{ height: '500px', width: '100%' }} />
+    <div style={{ height: '100%' }}>
+      <Box
+          sx={{
+          position: 'absolute',
+          top: 136,
+          left: 16,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 1.5,
+          zIndex: 1000,
+          }}
+      >
+        <Tooltip title="Map Menu" placement="right">
+          <Button variant="contained" size="small" color="secondary" onClick={handleShowMenu}>
+            <MenuIcon fontSize='small'/>
+          </Button>
+        </Tooltip>
+
+        {showMenu && (
+          <Box
+            sx={{
+            position: 'relative',
+            left: 16,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1.5,
+            zIndex: 1000,
+            }}
+          >
+            <Tooltip title="Center map" placement="right">
+              <Button 
+                variant="contained"
+                size="small"
+                color="secondary"
+                onClick={handleCenter}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              >
+                <NearMeIcon fontSize="small"/>
+              </Button>
+            </Tooltip>
+            <Tooltip title="Toggle no-fly zone" placement="right">
+              <Button 
+                variant="contained"
+                size="small"
+                color={layersVisible.noFlyZones ? "tertiary" : "secondary"}
+                onClick={() => toggleLayerVisibility('noFlyZones')}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              >  
+                <AirplanemodeInactiveIcon fontSize="small"/>
+              </Button>
+            </Tooltip>
+            <Tooltip title="Toggle landscape" placement="right">
+              <Button 
+                variant="contained"
+                size="small"
+                color={layersVisible.terrain ? "tertiary" : "secondary"}
+                onClick={() => toggleLayerVisibility('terrain')}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              > 
+                <LandscapeIcon fontSize="small"/>
+              </Button>
+            </Tooltip>
+            <Tooltip title="Toggle buildings" placement="right">
+              <Button 
+                variant="contained"
+                size="small"
+                color={layersVisible.buildings ? "tertiary" : "secondary"}
+                onClick={() => toggleLayerVisibility('buildings')}
+                sx={{
+                  width: 32,
+                  height: 32,
+                  borderRadius: '50%',
+                  minWidth: 0,
+                  padding: 0,
+                }}
+              >
+                <ApartmentIcon fontSize="small"/>
+              </Button>
+            </Tooltip>
+          </Box>    
+        )}    
+      </Box>
+      <div ref={mapContainer} className="map-container" style={{ height: '100%', width: '100%' }} />
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../utils/ROSConnection';
 import ROSLIB from 'roslib';
 
 const PointPublisher = ({ editPoints }) => {

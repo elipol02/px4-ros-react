@@ -1,14 +1,15 @@
 import React, { useEffect, useMemo } from 'react';
-import Button from '@mui/material/Button';
-import Slider from '@mui/material/Slider';
+import { Tooltip as MuiToolTip, Button, Slider, Box } from '@mui/material';
 import { Line } from 'react-chartjs-2';
 import { Chart, LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend } from 'chart.js';
 import dragData from 'chartjs-plugin-dragdata';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
+import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter';
 
 Chart.register(LineElement, PointElement, LinearScale, CategoryScale, Title, Tooltip, Legend);
 Chart.register(dragData);
 
-const WaypointsComponent = ({ setPoints, points, setEditPoints, pointsMessage, defaultElevation, setDefaultElevation }) => {
+const WaypointsComponent = ({ setPoints, points, setEditPoints, pointsMessage, defaultElevation, setDefaultElevation, showWaypointEditor }) => {
   useEffect(() => {
     if (pointsMessage && pointsMessage.poses) {
       const newPoints = pointsMessage.poses.map(pose => ({
@@ -88,22 +89,46 @@ const WaypointsComponent = ({ setPoints, points, setEditPoints, pointsMessage, d
   }), [handleElevationChange]);
 
   return (
-    <div style={{ padding: '10px' }}>
-      <Button variant="contained" size="small" color="primary" onClick={handleClearMarkers} style={{ marginBottom: '10px' }}>Clear Markers</Button>
-      <Button variant="contained" size="small" color="primary" onClick={handleSetAllToDefaultElevation} style={{ marginBottom: '10px' }}>Set All to Default Altitude</Button>
-      <Slider
-        value={defaultElevation}
-        min={0}
-        max={100}
-        step={1}
-        onChange={(e, newValue) => setDefaultElevation(newValue)}
-        valueLabelDisplay="auto"
-        aria-labelledby="default-elevation-slider"
-        style={{ marginBottom: '10px', width: '200px' }}
-      />
-      <div style={{ height: '100px' }}>
-        <Line data={chartData} options={chartOptions} />
-      </div>
+    <div style={{ width: "100%"}}>
+      {showWaypointEditor && (
+        <Box sx={{ flexShrink: 0, width: '100%' }}>
+          <div style={{ padding: '10px', marginTop: '-48px'}}>
+            <Box
+              sx= {{
+                display: 'flex',
+                flexDirection: 'row',
+                gap: 0.5,
+                zIndex: 1000,
+              }}
+            >
+              <MuiToolTip title="Clear Waypoints" placement="top">
+                <Button variant="contained" size="small" color="tertiary" onClick={handleClearMarkers} style={{ marginBottom: '10px' }}>
+                  <NotInterestedIcon/>
+                </Button>
+              </MuiToolTip>
+              <MuiToolTip title="Set all to default elevation" placement="top">
+                <Button variant="contained" size="small" color="tertiary" onClick={handleSetAllToDefaultElevation} style={{ marginBottom: '10px' }}>
+                  <VerticalAlignCenterIcon/>
+                </Button>
+              </MuiToolTip>
+              <Slider
+                value={defaultElevation}
+                min={0}
+                max={100}
+                step={1}
+                color="dark"
+                onChange={(e, newValue) => setDefaultElevation(newValue)}
+                valueLabelDisplay="auto"
+                aria-labelledby="default-elevation-slider"
+                style={{ marginBottom: '10px', width: '200px' }}
+              />
+            </Box>
+            <div style={{ height: '100px' }}>
+              <Line data={chartData} options={chartOptions} />
+            </div>
+          </div>
+        </Box>
+      )}
     </div>
   );
 };

@@ -4,3 +4,15 @@
     align-items: center;
   }
   
+  body, html, #root {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .mapboxgl-ctrl-logo {
+    display: none !important;
+  }

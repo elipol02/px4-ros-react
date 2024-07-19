@@ -11,7 +11,7 @@ const ROSConnection = ({ children }) => {
 
   useEffect(() => {
     const rosConnection = new ROSLIB.Ros({
-      url: 'ws://localhost:9090',
+      url: 'ws://192.168.0.74:9090',
     });
 
     rosConnection.on('connection', () => {
@@ -30,7 +30,7 @@ const ROSConnection = ({ children }) => {
       setConnected(false);
       setTimeout(() => {
         const newRosConnection = new ROSLIB.Ros({
-          url: 'ws://localhost:9090',
+          url: 'ws://192.168.0.74:9090',
         });
         setRos(newRosConnection);
       }, 5000); // Reconnect after 5 seconds

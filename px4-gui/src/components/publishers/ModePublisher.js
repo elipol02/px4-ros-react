@@ -1,10 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../utils/ROSConnection';
 import ROSLIB from 'roslib';
-import { Button, Menu, MenuItem } from '@mui/material';
+import { Button, Menu, MenuItem, Tooltip } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
-const ModePublisher = ({ initialMode }) => {
+const modeDisplayNames = {
+  'MANUAL': 'MANUAL',
+  'ALTCTL': 'ALTCTL',
+  'POSCTL': 'POSCTL',
+  'AUTO.MISSION': 'MISSION',
+  'AUTO.LOITER': 'LOITER',
+  'AUTO.RTL': 'RTL',
+  'AUTO.TAKEOFF': 'TAKEOFF',
+  'AUTO.LAND': 'LAND',
+  'OFFBOARD': 'OFFBOARD',
+  'STABILIZED': 'STABILIZED',
+  'RATTITUDE': 'RATTITUDE',
+  'ACRO': 'ACRO',
+};
+
+const ModePublisher = ({ initialMode, isSmallScreen }) => {
   const { ros, connected } = useROS();
   const [modePublisher, setModePublisher] = useState(null);
   const [mode, setMode] = useState(initialMode || '');
@@ -55,36 +70,38 @@ const ModePublisher = ({ initialMode }) => {
     setAnchorEl(null);
   };
 
+  const getDisplayMode = (mode) => {
+    return modeDisplayNames[mode] || mode;
+  };
+
   return (
     <div style={{ margin: '5px' }}>
-      <Button
-        variant="contained"
-        size="large"
-        onClick={handleButtonClick}
-        endIcon={<ArrowDropDownIcon/>}
-      >
-        {initialMode ? initialMode : 'Select Mode'}
-      </Button>
+      <Tooltip title="Flight Mode" placement="bottom">
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleButtonClick}
+          endIcon={<ArrowDropDownIcon />}
+          sx={{ paddingX: isSmallScreen ? "8px" : "16px" }}
+        >
+          {getDisplayMode(initialMode)}
+        </Button>
+      </Tooltip>
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={handleClose}
         transitionDuration={0}
       >
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'MANUAL')}>MANUAL</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'ALTCTL')}>ALTCTL</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'POSCTL')}>POSCTL</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'AUTO.MISSION')}>AUTO.MISSION</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'AUTO.LOITER')}>AUTO.LOITER</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'AUTO.RTL')}>AUTO.RTL</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'AUTO.TAKEOFF')}>AUTO.TAKEOFF</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'AUTO.LAND')}>AUTO.LAND</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'OFFBOARD')}>OFFBOARD</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'STABILIZED')}>STABILIZED</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'RATTITUDE')}>RATTITUDE</MenuItem>
-        <MenuItem onClick={(event) => handleMenuItemClick(event, 'ACRO')}>ACRO</MenuItem>
-
-        {/* Add more modes as needed */}
+        {Object.keys(modeDisplayNames).map((modeKey) => (
+          <MenuItem
+            key={modeKey}
+            onClick={(event) => handleMenuItemClick(event, modeKey)}
+            sx={{ padding: '4px 16px' }}
+          >
+            {modeDisplayNames[modeKey]}
+          </MenuItem>
+        ))}
       </Menu>
     </div>
   );

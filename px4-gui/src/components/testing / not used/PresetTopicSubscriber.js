@@ -1,11 +1,31 @@
 // components/PresetTopicGetter.js
 import { useEffect, useRef } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../../utils/ROSConnection';
 import ROSLIB from 'roslib';
 
 const PresetTopicSubscriber = ({ topicName, keysToDisplay, newKeyNames, setPresetFields, saveHistory }) => {
   const { ros, connected } = useROS();
   const listenerRef = useRef(null);
+
+  const flattenObject = (obj, parent = '', res = {}) => {
+    for (let key in obj) {
+      const propName = parent ? `${parent}.${key}` : key;
+      if (typeof obj[key] === 'object' && obj[key] !== null) {
+        flattenObject(obj[key], propName, res);
+      } else {
+        res[propName] = obj[key];
+      }
+    }
+    return res;
+  };
+
+  const parseMessage = (msg) => {
+    try {
+      return typeof msg === 'string' ? JSON.parse(msg) : msg;
+    } catch (e) {
+      return msg;
+    }
+  };
 
   useEffect(() => {
     if (!ros || !connected) return;
@@ -24,12 +44,16 @@ const PresetTopicSubscriber = ({ topicName, keysToDisplay, newKeyNames, setPrese
             ros,
             name: topicName,
             messageType: messageType,
+            throttle_rate : 100,
           });
 
           listenerRef.current.subscribe((message) => {
+            const parsedMessage = parseMessage(message);
+            const flatMessage = flattenObject(parsedMessage);
+
             const filteredMessage = keysToDisplay.reduce((acc, key, index) => {
               const newKeyName = newKeyNames[index] || key;
-              acc[newKeyName] = message[key];
+              acc[newKeyName] = flatMessage[key];
               return acc;
             }, {});
 

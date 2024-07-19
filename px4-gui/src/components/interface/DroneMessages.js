@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Typography, Box, Card, CardContent } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 
 const severityLevels = [
   'Emergency',
@@ -12,38 +12,66 @@ const severityLevels = [
   'Debug',
 ];
 
-const DroneMessages = ({ severities, messages }) => {
+const DroneMessages = ({ severities, messages, seconds, nanoseconds, setLastMessageSeverity, setLastMessage, showMessages }) => {
   const [messageHistory, setMessageHistory] = useState([]);
-  const cardContentRef = useRef(null);
+  const contentRef = useRef(null);
+  const seenTimestamps = useRef(new Set());
 
   useEffect(() => {
-    if (severities && messages && severities.length === messages.length) {
-      const newMessageHistory = severities.map((severity, index) => ({
-        severity: severityLevels[severity],
-        message: messages[index],
-      }));
-      setMessageHistory(newMessageHistory);
+    if (severities && messages && severities.length === messages.length && seconds && nanoseconds) {
+      const newMessageHistory = [];
+      for (let i = 0; i < severities.length; i++) {
+        const timestamp = `${seconds[i]}-${nanoseconds[i]}`;
+        if (!seenTimestamps.current.has(timestamp)) {
+          seenTimestamps.current.add(timestamp);
+          newMessageHistory.push({
+            severity: severityLevels[severities[i]],
+            message: messages[i],
+            timestamp,
+          });
+        }
+      }
+      if (newMessageHistory.length > 0) {
+        setMessageHistory(prev => [...prev, ...newMessageHistory]);
+      }
     }
-  }, [severities, messages]);
+  }, [severities, messages, seconds, nanoseconds]);
 
   useEffect(() => {
-    if (cardContentRef.current) {
-      cardContentRef.current.scrollTop = cardContentRef.current.scrollHeight;
+    if (messageHistory.length > 0) {
+      setLastMessageSeverity(messageHistory[messageHistory.length - 1].severity);
+      setLastMessage(messageHistory[messageHistory.length - 1].message);
     }
-  }, [messageHistory]);
+  }, [messageHistory, setLastMessageSeverity, setLastMessage]);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      contentRef.current.scrollTop = contentRef.current.scrollHeight;
+    }
+  }, [messageHistory, showMessages]);
 
   return (
-    <Box sx={{ p: 2, my: 2, display: 'flex', justifyContent: 'space-between', width: 300, height: 300 }}>
-      <Card style={{ overflow: 'hidden', height: '100%', width: '100%' }}>
-        <CardContent ref={cardContentRef} style={{ overflowY: 'auto', height: '95%', padding: '8px' }}>
+    <>
+      {showMessages && (
+        <Box
+          ref={contentRef}
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: 300,
+            height: 150,
+            overflow: 'auto',
+            backgroundColor: 'rgba(255, 255, 255, 0.8)',
+          }}
+        >
           {messageHistory.map((msg, index) => (
-            <Typography key={index} variant="body2" component="p">
+            <Typography key={index} variant="body2" component="p" sx={{ paddingLeft: 1 }}>
               {`${msg.severity}: ${msg.message}`}
             </Typography>
           ))}
-        </CardContent>
-      </Card>
-    </Box>
+        </Box>
+      )}
+    </>
   );
 };
 

@@ -22,6 +22,12 @@ def generate_launch_description():
         ),
         Node(
             package='mavros_launch',
+            executable='preset_topic_aggregator',
+            name='preset_topic_aggregator',
+            output='screen',
+        ),
+        Node(
+            package='mavros_launch',
             executable='joystick',
             name='joystick',
             output='screen',
@@ -36,6 +42,12 @@ def generate_launch_description():
             package='mavros_launch',
             executable='mode_set',
             name='mode_set',
+            output='screen',
+        ),
+        Node(
+            package='mavros_launch',
+            executable='setpoint_control',
+            name='setpoint_control',
             output='screen',
         ),
         Node(
@@ -56,12 +68,12 @@ def generate_launch_description():
             parameters=[{
                 'axis_linear.z': 2,         # Throttle (e.g., left stick up/down)
                 'axis_angular.yaw': 3,      # Yaw (e.g., left stick left/right)
-                'axis_linear.y': 1,    # Pitch (e.g., right stick up/down)
-                'axis_linear.x': 0,     # Roll (e.g., right stick left/right)
+                'axis_linear.y': 0,    # Pitch (e.g., right stick up/down)
+                'axis_linear.x': 1,     # Roll (e.g., right stick left/right)
                 'scale_linear.z': -4.0,
                 'scale_angular.yaw': 4.0,
                 'scale_linear.y': -4.0,
-                'scale_linear.x': -4.0,
+                'scale_linear.x': 4.0,
                 'enable_button': 7,
                 'enable_arm_button': 1,    # Button to arm the vehicle
                 'enable_disarm_button': 0, # Button to disarm the vehicle

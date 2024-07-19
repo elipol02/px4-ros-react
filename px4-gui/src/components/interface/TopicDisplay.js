@@ -51,7 +51,7 @@ const TopicDisplay = ({ topic, messages, onRemove }) => {
   const parsedMessage = parseMessage(message);
 
   return (
-    <Box sx={{ p: 2, my: 2, display: 'flex', justifyContent: 'space-between', width: 300 }}>
+    <Box sx={{ p: 2, display: 'flex', justifyContent: 'space-between', width: 300 }}>
       <Card style={{ overflow: 'auto', height: '100%', width: '100%' }}>
         <CardContent style={{ padding: '8px' }}>
           <Typography variant="h6" component="h2" gutterBottom>

@@ -13,6 +13,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         (os.path.join('share', package_name, 'launch'), glob('launch/*.launch.py')),
+        (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -27,6 +28,7 @@ setup(
             'arm_disarm = mavros_launch.arm_disarm:main',
             'mode_set = mavros_launch.mode_set:main',
             'setpoint_control = mavros_launch.setpoint_control:main',
+            'preset_topic_aggregator = mavros_launch.preset_topic_aggregator:main',
         ],
     },
 )

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../utils/ROSConnection';
 import ROSLIB from 'roslib';
 
 const DropdownTopicSubscriber = ({ topic, onNewMessage, onSubscriptionReady }) => {

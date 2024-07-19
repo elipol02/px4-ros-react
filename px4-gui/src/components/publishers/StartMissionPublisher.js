@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../utils/ROSConnection';
 import ROSLIB from 'roslib';
-import { Button } from '@mui/material';
+import { Button, Tooltip, Box } from '@mui/material';
+import VideogameAssetIcon from '@mui/icons-material/VideogameAsset';
+import RouteIcon from '@mui/icons-material/Route';
 
-const StartMissionPublisher = () => {
+const StartMissionPublisher = ({ isSmallScreen }) => {
   const { ros, connected } = useROS();
   const [startMissionPublisher, setStartMissionPublisher] = useState(null);
   const [isMissionStarted, setIsMissionStarted] = useState(false);
@@ -45,14 +47,38 @@ const StartMissionPublisher = () => {
   };
 
   return (
-    <Button
-      variant="contained"
-      color="primary"
-      onClick={handlePublish}
-      style={{ margin: '5px' }}
-    >
-      {isMissionStarted ? 'Switch to Joystick' : 'Switch to Mission'}
-    </Button>
+    <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+      <Tooltip title="Toggle waypoint mode" placement="bottom">
+        <Button
+          variant="contained"
+          color="tertiary"
+          onClick={handlePublish}
+          sx={{ 
+            margin: '5px',
+            paddingX: isSmallScreen ? "8px" : "16px",
+            minWidth: 0,
+          }}
+          disabled={isMissionStarted}
+        >
+          <RouteIcon />
+        </Button>
+      </Tooltip>
+      <Tooltip title="Toggle joystick mode" placement="bottom">
+        <Button
+          variant="contained"
+          color="tertiary"
+          onClick={handlePublish}
+          sx={{ 
+            margin: '5px',
+            paddingX: isSmallScreen ? "8px" : "16px",
+            minWidth: 0,
+          }}
+          disabled={!isMissionStarted}
+        >
+          <VideogameAssetIcon />
+        </Button>
+      </Tooltip>
+    </Box>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { useROS } from '../ROSConnection';
+import { useROS } from '../utils/ROSConnection';
 import ROSLIB from 'roslib';
 
 const UnfilteredPresetTopicSubscriber = ({ topicName, setField }) => {
@@ -32,7 +32,6 @@ const UnfilteredPresetTopicSubscriber = ({ topicName, setField }) => {
 
             listenerRef.current.subscribe((message) => {
               setField(message);
-              console.log(message);
             });
           } else {
             console.error(`Topic ${topicName} not found, retrying...`);
