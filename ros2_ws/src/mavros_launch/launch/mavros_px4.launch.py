@@ -13,8 +13,15 @@ def generate_launch_description():
                 'fcu_url': 'udp://:14540@localhost:14557',
                 # Alta X:
                 #'fcu_url': '/dev/ttyACM0:921600',
+                # Sentinel (on wifi):
+                #'fcu_url': 'udp://:14550@192.168.8.1:14550',
+                # Sentinel (on microhard):
+                #'fcu_url': 'udp://:14550@192.168.168.100:14550',
+                # zippy:
+                #'fcu_url': '/dev/ttyUSB0:57600',
                 'gcs_url': 'udp://@localhost:14551',
                 'target_system_id': 1,
+                'fcu_protocol': 'v2.0',
                 'target_component_id': 1,
                 'log_level': 'info',
                 'heartbeat_mav_type': 'GCS'

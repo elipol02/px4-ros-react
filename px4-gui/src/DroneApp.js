@@ -15,7 +15,7 @@ import DroneMessages from'./components/interface/DroneMessages';
 import UnfilteredPresetTopicSubscriber  from './components/subscribers/UnfilteredPresetTopicSubscriber ';
 import MapComponent from'./components/interface/MapComponent';
 import Waypoints from'./components/interface/Waypoints';
-import Px4Params from './components/interface/Px4Params';
+import Px4Params from './components/interface/Params';
 import DroneState from './components/interface/DroneState';
 import DistanceFromHome from './components/interface/DistanceFromHome';
 import DroneSpeed from './components/interface/DroneSpeed';

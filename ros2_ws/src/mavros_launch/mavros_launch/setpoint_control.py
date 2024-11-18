@@ -172,7 +172,7 @@ class SetpointControl(Node):
         return x, y
 
     def reached_setpoint(self, x, y, z):
-        tolerance = 0.5  # tolerance in meters
+        tolerance = 2  # tolerance in meters
         distance = self.calculate_distance(self.local_position.pose.position.x, self.local_position.pose.position.y, self.local_position.pose.position.z,
                                            x, y, z)
         return distance < tolerance

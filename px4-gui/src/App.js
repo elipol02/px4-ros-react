@@ -8,7 +8,6 @@ import AnnouncementIcon from '@mui/icons-material/Announcement';
 import SettingsIcon from '@mui/icons-material/Settings';
 import ROSConnection from './components/utils/ROSConnection';
 import DropdownTopicSubscriber from './components/subscribers/DropdownTopicSubscriber';
-import PresetSubscribers from './components/testing / not used/PresetSubscribers';
 import UnfilteredPresetTopicSubscriber  from './components/subscribers/UnfilteredPresetTopicSubscriber ';
 import AggregatedTopicSubscriber from './components/subscribers/AggregatedTopicSubscriber';
 import ArmDisarmPublisher from './components/publishers/ArmDisarmPublisher';
@@ -18,7 +17,6 @@ import StartMissionPublisher from './components/publishers/StartMissionPublisher
 import DroneMessages from'./components/interface/DroneMessages';
 import MapComponent from'./components/interface/MapComponent';
 import Waypoints from'./components/interface/Waypoints';
-import Px4Params from './components/interface/Px4Params';
 import DroneState from './components/interface/DroneState';
 import DistanceFromHome from './components/interface/DistanceFromHome';
 import DroneSpeed from './components/interface/DroneSpeed';
@@ -26,6 +24,7 @@ import DroneAttitude from './components/interface/DroneAttitude';
 import Settings from './components/interface/Settings';
 import Dropdown from './components/interface/Dropdown';
 import TopicDisplay from './components/interface/TopicDisplay';
+import VideoPlayer from './components/interface/VideoPlayer';
 
 function DroneControlApp() {
   const [showWaypointEditor, setShowWaypointEditor] = useState(false);
@@ -134,7 +133,7 @@ function DroneControlApp() {
                     <AppBar position="static" sx={{ backgroundColor: 'white', color: 'black', height: '64px' }}>
                         <Toolbar>
                             <Typography variant={isSmallScreen ? "p" : "h6"} sx={{ marginRight: isSmallScreen ? 1 : 2 }}>
-                                ROS-REACT
+                                MAVROS-JS
                             </Typography>
                             <Button 
                                 variant="outline" 
@@ -182,7 +181,7 @@ function DroneControlApp() {
                             <MapComponent
                                 latitude={getLastItem('latitude')}
                                 longitude={getLastItem('longitude')}
-                                angle={getLastItem('compass hdg')}
+                                angle={getLastItem('compass_hdg')}
                                 points={points}
                                 setEditPoints={setEditPoints}
                                 defaultElevation={defaultElevation}
@@ -190,11 +189,12 @@ function DroneControlApp() {
                             <Box
                                 sx={{
                                 position: 'absolute',
-                                top: 16,
+                                top: (isSmallScreen && showMessages) ? 148 : 16,
                                 right: 16,
                                 backgroundColor: 'rgba(255, 255, 255, 0.8)',
-                                padding: 2,
+                                padding: 1,
                                 borderRadius: 1,
+                                width: 175
                                 }}
                             >   
                                 {isSmallScreen &&
@@ -226,12 +226,23 @@ function DroneControlApp() {
                                     Altitude: {altitude !== null && <>{altitude.toFixed(3)}</>} m
                                 </Typography>
                             </Box>
+
+                            <Box
+                                sx={{
+                                position: 'absolute',
+                                bottom: 16,
+                                left: 16,
+                                }}
+                            >
+                                <VideoPlayer />
+                            </Box>
                         </Box>
                         <Box
                                 sx={{
                                 position: 'absolute',
-                                top: 64,
-                                left: 224,
+                                top: isSmallScreen ? 80 : 64,
+                                left: !isSmallScreen && 196,
+                                right: isSmallScreen && 16,
                                 borderRadius: 1,
                                 }}
                             >
@@ -243,6 +254,7 @@ function DroneControlApp() {
                                 setLastMessage={setLastMessage}
                                 setLastMessageSeverity={setLastMessageSeverity}
                                 showMessages={showMessages}
+                                isSmallScreen={isSmallScreen}
                             />
                         </Box>
 

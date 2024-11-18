@@ -52,7 +52,7 @@ const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defau
     if (map.current) return; // initialize map only once
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/outdoors-v12',
+      style: 'mapbox://styles/mapbox/satellite-v9',
       center: [longitude, latitude],
       zoom: 15,
       bearing: bearing,

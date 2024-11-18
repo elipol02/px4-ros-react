@@ -12,7 +12,7 @@ const severityLevels = [
   'Debug',
 ];
 
-const DroneMessages = ({ severities, messages, seconds, nanoseconds, setLastMessageSeverity, setLastMessage, showMessages }) => {
+const DroneMessages = ({ severities, messages, seconds, nanoseconds, setLastMessageSeverity, setLastMessage, showMessages, isSmallScreen }) => {
   const [messageHistory, setMessageHistory] = useState([]);
   const contentRef = useRef(null);
   const seenTimestamps = useRef(new Set());
@@ -58,10 +58,12 @@ const DroneMessages = ({ severities, messages, seconds, nanoseconds, setLastMess
           sx={{
             display: 'flex',
             flexDirection: 'column',
-            width: 300,
-            height: 150,
+            width: isSmallScreen ? 175 :300,
+            height: isSmallScreen ? 100 : 150,
             overflow: 'auto',
             backgroundColor: 'rgba(255, 255, 255, 0.8)',
+            padding: 1,
+            borderRadius: isSmallScreen && 1,
           }}
         >
           {messageHistory.map((msg, index) => (

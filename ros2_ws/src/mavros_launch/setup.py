@@ -29,6 +29,7 @@ setup(
             'mode_set = mavros_launch.mode_set:main',
             'setpoint_control = mavros_launch.setpoint_control:main',
             'preset_topic_aggregator = mavros_launch.preset_topic_aggregator:main',
+            'rtsp_stream_publisher = mavros_launch.rtsp_stream_publisher:main',
         ],
     },
 )

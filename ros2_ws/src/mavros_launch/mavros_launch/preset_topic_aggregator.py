@@ -1,10 +1,11 @@
 import rclpy
 from rclpy.node import Node
 from rclpy.qos import QoSProfile, ReliabilityPolicy, HistoryPolicy, DurabilityPolicy
-from std_msgs.msg import String, Float64
+from std_msgs.msg import String, Float64, UInt32
 from mavros_msgs.msg import State, ExtendedState, SysStatus, Altitude, StatusText
 from sensor_msgs.msg import NavSatFix
 from geometry_msgs.msg import TwistStamped, PoseStamped
+from diagnostic_msgs.msg import DiagnosticArray
 import json
 
 class PresetTopicAggregator(Node):
@@ -36,9 +37,9 @@ class PresetTopicAggregator(Node):
                     'qos': {'reliability': ReliabilityPolicy.RELIABLE, 'durability': DurabilityPolicy.VOLATILE, 'history': HistoryPolicy.KEEP_LAST, 'depth': 10}
                 },
                 {
-                    'name': '/mavros/global_position/raw/satellites',
-                    'msg_type': NavSatFix,
-                    'keys': [('data')],
+                    'name': '/diagnostics',
+                    'msg_type': DiagnosticArray,
+                    'keys': [('status', '1', 'values', '0', 'value')],
                     'new_keys': ['satellites'],
                     'qos': {'reliability': ReliabilityPolicy.RELIABLE, 'durability': DurabilityPolicy.VOLATILE, 'history': HistoryPolicy.KEEP_LAST, 'depth': 10}
                 },
