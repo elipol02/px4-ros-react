@@ -11,7 +11,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { Button, Tooltip, Box } from '@mui/material';
 
 
-mapboxgl.accessToken = 'pk.eyJ1IjoiZWxpcG9sMDIiLCJhIjoiY2x4cDE0eGNqMDVobjJrcGtzODUxMXZtMyJ9.e0Iye6AtNZEH_B806foH5w'; // Replace with your Mapbox access token
+mapboxgl.accessToken = ''; // Replace with your Mapbox access token
 
 const MapComponent = ({ latitude, longitude, angle, points, setEditPoints, defaultElevation }) => {
   const [noFlyZones, setNoFlyZones] = useState(null);
